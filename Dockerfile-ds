@@ -4,6 +4,7 @@ FROM domain-server-build-base as domain-server-build
 RUN echo UTC >/etc/timezone
 
 # The tag to pull from the Project Athena source repository.
+ARG REPO=https://github.com/vircadia/vircadia
 ARG TAG=master
 
 # Tell the libraries not to use the interactive dialogs
@@ -16,6 +17,7 @@ FROM ubuntu:18.04 as domain-server-run
 RUN echo UTC >/etc/timezone
 
 # The tag to pull from the Project Athena source repository. (Note defn in previous stage)
+ARG REPO=https://github.com/vircadia/vircadia
 ARG TAG=master
 
 # Tell the libraries not to use the interactive dialogs
@@ -61,11 +63,11 @@ VOLUME /home/cadia/.local
 VOLUME /home/cadia/logs
 
 # expose ports for domain server
-EXPOSE 40100 40101 40102
-EXPOSE 40100/udp 40101/udp 40102/udp
+# EXPOSE 40100 40101 40102
+# EXPOSE 40100/udp 40101/udp 40102/udp
 
 # expose ports for assignment client
-EXPOSE 48000/udp 48001/udp 48002/udp 48003/udp 48004/udp 48005/udp 48006/udp
+# EXPOSE 48000/udp 48001/udp 48002/udp 48003/udp 48004/udp 48005/udp 48006/udp
 
 ENTRYPOINT ["/home/cadia/start-domain-server.sh"]
 
