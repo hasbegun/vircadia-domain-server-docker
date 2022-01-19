@@ -63,10 +63,6 @@ clients use ports all over the place. The assignment-clients need some
 taming on their port usage and some parameterization for running
 multiple domain-servers on one processor.
 
-TODO: Break out all the assignment clients into separate containers running
-on the 'internal' virtual network. Use `docker-compose` or similar to
-start them all up and to do scaling for things like audio load, etc.
-
 ## Ice Server
 
 The Docker image also contains an ice-server which you can run if you
@@ -96,3 +92,25 @@ was built with:
    }
 
 ```
+
+### Docker Compose
+Start and stop all necessary services using `docker-compose`.
+A. In order to do so, followig the instruction for the domain-server and the ice-server build above. It will create vircadia-domain-server. Based on this docker image, domain-server and ice-server can be launched.
+B. Create a mentaverse docker image. To do so, consult https://github.com/vircadia/vircadia-metaverse/blob/master/docs/RunningDockerImage.md
+
+C. Run `build-mongo.sh` from `vircadia-mongo` dir.
+```
+    cd vircadia-mongo && ./buid-mongo.sh
+```
+Mongo will be pulled from Mongo(4.4) repository.
+
+For now, it will deploy vircadia domain-server, ice-server, mongoDB, and metaverse server.
+MongoDB will be persists at `./persist-data/vircadia-mongo`.
+
+D. Launch docker-compose.
+```
+    docker-compose up
+```
+This will launch 1) vircadia-mongodb 2) metaverseserver 3) vircadia-ice-server and 4) vircadia-domain-server
+
+TODO: Need to build other compoenent such as audio and etc. Working on those.
