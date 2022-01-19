@@ -1,0 +1,77 @@
+version: '3.4'
+
+services:
+  vircadia-mongodb:
+    image: vircadia-mongodb:4.4
+    container_name: vircadia-mongodb
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+      - 28017:28017
+    volumes:
+      - ./persist-data/vircadia-mongo/data/db:/data/db
+      - ./persist-data/vircadia-mongo/data/log:/var/log/mongodb
+    networks:
+      - vircadia
+
+  vircadia-metaverse:
+    image: metaverseserver
+    container_name: vircadia-metaverse-server
+    restart: unless-stopped
+    environment:
+      - IAMUS_CONFIG_FILE=/home/cadia/config/iamus.json
+    volumes:
+      - ./files/metaverse/iamus.json:/home/cadia/config/iamus.json
+      - ./persist-data/vircadia-metaverse/iamus/logs:/home/cadia/Iamus/logs
+      - ./persist-data/vircadia-metaverse/iamus/Logs:/home/cadia/Iamus/Logs
+    ports:
+      - 9400:9400
+    links:
+      - vircadia-mongodb
+    networks:
+      - vircadia
+    depends_on:
+      - vircadia-mongo
+
+  vircadia-ice-server:
+    image: vircadia-domain-server
+    container_name: vircadia-ice-server
+    restart: unless-stopped
+    ports:
+      - 7337:7337
+      - 7337:7337/udp
+    environment:
+      - METAVERSE_URL=vircadia-metaverse:9400
+    entrypoint: /home/cadia/start-ice-server.sh
+    volumes:
+      - ./persist-data/vircadia-ice-server/server-dotlocal/testmeteverse:/home/cadia/.local
+      - ./persist-data/vircadia-ice-server/server-logs/testmeteverse:/home/cadia/logs
+    networks:
+      - vircadia
+    depends_on:
+      - vircadia-metaverse
+
+  vircadia-domain-server:
+    image: vircadia-domain-server
+    container_name: vircadia-domain-server
+    restart: unless-stopped
+    ports:
+      - 40100-40102:40100-40102
+      - 40100-40102:40100-40102/udp
+      - 48000-48009:48000-48009/udp
+    environment:
+      - METAVERSE_URL=vircadia-metaverse:9400
+      - ICE_SERVER=vircadia-ice-server:7337
+      - CLEANNAME=vircadia-metaverse
+      - INSTANCE=0
+    volumes:
+      - ./persist-data/vircadia-domain-server/server-dotlocal/testmeteverse:/home/cadia/.local
+      - ./persist-data/vircadia-domain-server/server-logs/testmeteverse:/home/cadia/logs
+    networks:
+      - vircadia
+    depends_on:
+      - vircadia-ice-server
+
+networks:
+  vircadia:
+    driver: bridge

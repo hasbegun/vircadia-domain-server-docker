@@ -1,0 +1,17 @@
+{
+    "metaverse": {
+        "metaverse-name": "TestMetaverse",
+        "metaverse-nick-name": "TestMetaverse",
+        "metaverse-server-url": "vircadia-metaverse:9400",
+        "default-ice-server-url": "vircadia-ice-server:7337"
+    },
+    "database": {
+        "db": "domainstore",
+        "db-host": "vircadia-mongodb",
+        "db-user": "cadiauser",
+        "db-pw": "noneknowsit"
+    },
+    "debug": {
+        "loglevel": "debug"
+    }
+}
