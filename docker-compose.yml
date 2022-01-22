@@ -7,14 +7,13 @@ services:
     restart: unless-stopped
     ports:
       - 27017:27017
-      - 28017:28017
     volumes:
       - ./persist-data/vircadia-mongo/data/db:/data/db
       - ./persist-data/vircadia-mongo/data/log:/var/log/mongodb
     networks:
       - vircadia
 
-  vircadia-metaverse:
+  vircadia-metaverse-server:
     image: metaverseserver
     container_name: vircadia-metaverse-server
     restart: unless-stopped
@@ -31,7 +30,20 @@ services:
     networks:
       - vircadia
     depends_on:
-      - vircadia-mongo
+      - vircadia-mongodb
+
+  vircadia-metaverse-dashboard:
+    image: metaverse-dashboard
+    container_name: vircadia-metaverse-dashboard
+    restart: unless-stopped
+    volumes:
+      - ./persist-data/vircadia-metaverse-dashboard/logs:/home/cadia/vircadia-metaverse-dashboard/log
+    ports:
+      - 8080:8080
+    networks:
+      - vircadia
+    depends_on:
+      - vircadia-metaverse-server
 
   vircadia-ice-server:
     image: vircadia-domain-server
@@ -41,7 +53,7 @@ services:
       - 7337:7337
       - 7337:7337/udp
     environment:
-      - METAVERSE_URL=vircadia-metaverse:9400
+      - METAVERSE_URL=vircadia-metaverse-server:9400
     entrypoint: /home/cadia/start-ice-server.sh
     volumes:
       - ./persist-data/vircadia-ice-server/server-dotlocal/testmeteverse:/home/cadia/.local
@@ -49,7 +61,7 @@ services:
     networks:
       - vircadia
     depends_on:
-      - vircadia-metaverse
+      - vircadia-metaverse-server
 
   vircadia-domain-server:
     image: vircadia-domain-server
@@ -60,9 +72,9 @@ services:
       - 40100-40102:40100-40102/udp
       - 48000-48009:48000-48009/udp
     environment:
-      - METAVERSE_URL=vircadia-metaverse:9400
+      - METAVERSE_URL=vircadia-metaverse-server:9400
       - ICE_SERVER=vircadia-ice-server:7337
-      - CLEANNAME=vircadia-metaverse
+      - CLEANNAME=vircadia-metaverse-server
       - INSTANCE=0
     volumes:
       - ./persist-data/vircadia-domain-server/server-dotlocal/testmeteverse:/home/cadia/.local

@@ -2,8 +2,9 @@
     "metaverse": {
         "metaverse-name": "TestMetaverse",
         "metaverse-nick-name": "TestMetaverse",
-        "metaverse-server-url": "vircadia-metaverse:9400",
-        "default-ice-server-url": "vircadia-ice-server:7337"
+        "metaverse-server-url": "http://vircadia-metaverse-server:9400",
+        "default-ice-server-url": "http://vircadia-ice-server:7337",
+        "dashboard-url": "http://vircadia-metaverse-dashboard:8080"
     },
     "database": {
         "db": "domainstore",
