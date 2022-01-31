@@ -1,10 +1,11 @@
-version: '3.4'
+version: '3.9'
 
 services:
   vircadia-mongodb:
     image: vircadia-mongodb:4.4
     container_name: vircadia-mongodb
     restart: unless-stopped
+    hostname: vircadia-mongodb
     ports:
       - 27017:27017
     volumes:
@@ -14,15 +15,16 @@ services:
       - vircadia
 
   vircadia-metaverse-server:
-    image: metaverseserver
+    image: metaverse-server:latest
     container_name: vircadia-metaverse-server
     restart: unless-stopped
+    hostname: vircadia-metaverse-server
     environment:
       - IAMUS_CONFIG_FILE=/home/cadia/config/iamus.json
     volumes:
       - ./files/metaverse/iamus.json:/home/cadia/config/iamus.json
-      - ./persist-data/vircadia-metaverse/iamus/logs:/home/cadia/Iamus/logs
-      - ./persist-data/vircadia-metaverse/iamus/Logs:/home/cadia/Iamus/Logs
+      - ./persist-data/vircadia-metaverse/metaverse/logs:/home/cadia/vircadia-metaverse/logs
+      - ./persist-data/vircadia-metaverse/metaverse/Logs:/home/cadia/vircadia-metaverse/Logs
     ports:
       - 9400:9400
     links:
@@ -33,27 +35,31 @@ services:
       - vircadia-mongodb
 
   vircadia-metaverse-dashboard:
-    image: metaverse-dashboard
+    image: metaverse-dashboard:latest
     container_name: vircadia-metaverse-dashboard
     restart: unless-stopped
+    hostname: vircadia-metaverse-dashboard
     volumes:
       - ./persist-data/vircadia-metaverse-dashboard/logs:/home/cadia/metaverse-dashboard/log
     ports:
       - 8080:8080
+    links:
+      - vircadia-metaverse-server
     networks:
       - vircadia
     depends_on:
       - vircadia-metaverse-server
 
   vircadia-ice-server:
-    image: vircadia-domain-server
+    image: vircadia-domain-server:latest
     container_name: vircadia-ice-server
     restart: unless-stopped
+    hostname: vircadia-ice-server
     ports:
       - 7337:7337
       - 7337:7337/udp
     environment:
-      - METAVERSE_URL=vircadia-metaverse-server:9400
+      - METAVERSE_URL=http://localhost:9400
     entrypoint: /home/cadia/start-ice-server.sh
     volumes:
       - ./persist-data/vircadia-ice-server/server-dotlocal/testmeteverse:/home/cadia/.local
@@ -64,16 +70,17 @@ services:
       - vircadia-metaverse-server
 
   vircadia-domain-server:
-    image: vircadia-domain-server
+    image: vircadia-domain-server:latest
     container_name: vircadia-domain-server
     restart: unless-stopped
+    hostname: vircadia-domain-server
     ports:
       - 40100-40102:40100-40102
       - 40100-40102:40100-40102/udp
       - 48000-48009:48000-48009/udp
     environment:
-      - METAVERSE_URL=vircadia-metaverse-server:9400
-      - ICE_SERVER=vircadia-ice-server:7337
+      - METAVERSE_URL=http://localhost:9400
+      - ICE_SERVER=localhost:7337
       - CLEANNAME=vircadia-metaverse-server
       - INSTANCE=0
     volumes:
