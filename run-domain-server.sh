@@ -23,9 +23,15 @@ if [[ ! -z "$2" ]] ; then
     ICE_SERVER=$2
 fi
 
-export DOCKER_REPOSITORY=${DOCKER_REPOSITORY:-misterblue}
-export IMAGE_NAME=${IMAGE_NAME:-vircadia-domain-server}
-export IMAGE_VERSION=${IMAGE_VERSION:-latest}
+# export DOCKER_REPOSITORY=${DOCKER_REPOSITORY:-misterblue}
+# export IMAGE_NAME=${IMAGE_NAME:-vircadia-domain-server}
+# export IMAGE_VERSION=${IMAGE_VERSION:-latest}
+
+# runs local
+export DOCKER_REPOSITORY=LOCAL
+export IMAGE_NAME=vircadia-domain-server
+export IMAGE_VERSION=latest
+
 if [[ "${DOCKER_REPOSITORY}" == "LOCAL" ]] ; then
     export DOCKER_IMAGE=${IMAGE_NAME}:${IMAGE_VERSION}
 else
