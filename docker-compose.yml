@@ -42,7 +42,7 @@ services:
     volumes:
       - ./persist-data/vircadia-metaverse-dashboard/logs:/home/cadia/metaverse-dashboard/log
     ports:
-      - 8080:8080
+      - 8090:8080
     links:
       - vircadia-metaverse-server
     networks:
@@ -90,6 +90,20 @@ services:
       - vircadia
     depends_on:
       - vircadia-ice-server
+
+  vircadia-web:
+    image: vircadia-web:latest
+    container_name: vircadia-web
+    restart: unless-stopped
+    hostname: vircadia-web
+    ports:
+      - 8080:8080
+    volumes:
+      - ./persist-data/vircadia-web/logs:/home/cadia/vircadia-web/log
+    networks:
+      - vircadia
+    depends_on:
+      - vircadia-domain-server
 
 networks:
   vircadia:

@@ -87,7 +87,7 @@ was built with:
       "GIT_COMMIT_SHORT": "FirstEightCharactersOfGitCommitString",
       "GIT_TAG": "GitBranchTag",
       "BUILD_DATE": "YYYYMMDD.HHMM",
-      "BUILD_DAY": "YYYYMMDD"
+      "BUILD_DAY": "YYYYMMDD",
       "VERSION_TAG": "TAG-YYYYMMDD-xxxxxxxx"
    }
 
@@ -109,8 +109,8 @@ MongoDB will be persists at `./persist-data/vircadia-mongo`.
 
 D. Launch docker-compose.
 ```
-    docker-compose up
+    docker-compose up -d
 ```
 This will launch 1) vircadia-mongodb 2) metaverseserver 3) vircadia-ice-server and 4) vircadia-domain-server
 
-TODO: Need to build other compoenent such as audio and etc. Working on those.
+TODO: Split network to configuration frontend and backend and hide backend serveses such as mongodb and metaverse-server.
