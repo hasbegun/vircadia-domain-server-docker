@@ -111,6 +111,6 @@ D. Launch docker-compose.
 ```
     docker-compose up -d
 ```
-This will launch 1) vircadia-mongodb 2) metaverseserver 3) vircadia-ice-server and 4) vircadia-domain-server
+This will launch 1) vircadia-mongodb 2) metaverseserver 3) vircadia-ice-server and 4) vircadia-domain-server 5) vircadia-web
 
 TODO: Split network to configuration frontend and backend and hide backend serveses such as mongodb and metaverse-server.

@@ -29,7 +29,11 @@ RUN adduser --disabled-password --gecos 'domain-server user' cadia
 RUN mkdir -p /opt/vircadia/install_master \
     && mkdir -p /opt/vircadia/version \
     && mkdir -p /opt/vircadia/qt5-install/lib \
-    && chown -R cadia:cadia /opt/vircadia
+    && chown -R cadia:cadia /opt/vircadia \
+    && mkdir -p /var/lib/vircadia/default \
+    && chown -R cadia:cadia /var/lib/vircadia \
+    && mkdir -p /etc/opt/vircadia \
+    && chown -R cadia:cadia /etc/opt/vircadia
 
 COPY --from=domain-server-build --chown=cadia:cadia /opt/vircadia/qt5-install/lib /opt/vircadia/qt5-install/lib
 COPY --from=domain-server-build --chown=cadia:cadia /opt/vircadia/install_master /opt/vircadia/install_master
@@ -94,4 +98,3 @@ VOLUME /home/cadia/logs
 # EXPOSE 48000/udp 48001/udp 48002/udp 48003/udp 48004/udp 48005/udp 48006/udp
 
 ENTRYPOINT ["/home/cadia/start-domain-server.sh"]
-

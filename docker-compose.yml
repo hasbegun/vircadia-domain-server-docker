@@ -80,7 +80,7 @@ services:
       - 48000-48009:48000-48009/udp
     environment:
       - METAVERSE_URL=http://localhost:9400
-      - ICE_SERVER=localhost:7337
+      - ICE_SERVER=http://localhost:7337
       - CLEANNAME=vircadia-metaverse-server
       - INSTANCE=0
     volumes:
