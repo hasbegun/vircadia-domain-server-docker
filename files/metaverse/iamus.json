@@ -2,18 +2,26 @@
     "metaverse": {
         "metaverse-name": "TestMetaverse",
         "metaverse-nick-name": "TestMetaverse",
-        "metaverse-server-url": "http://localhost:9400",
-        "default-ice-server-url": "http://localhost:7337",
-        "dashboard-url": "http://localhost:8080"
+        "metaverse-server-url": "vircadia-metaverse-server",
+        "default-ice-server-url": "https://ice.innoxai.com",
+        "dashboard-url": "https://dashboard.innoxai.com"
+    },
+    "server": {
+        "listen-host": "vircadia-metaverse-server",
+        "listen-port": "9400"
+    },
+    "metaverse-server": {
+        "base-admin-account": "adminer",
+        "enable-account-email-verification": false
     },
     "database": {
         "db": "domainstore",
         "db-host": "vircadia-mongodb",
+        "db-port": 27017,
         "db-user": "cadiauser",
         "db-pw": "noneknowsit"
     },
     "debug": {
-        "loglevel": "debug",
-        "devel": true
+        "loglevel": "debug"
     }
 }

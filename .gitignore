@@ -1,6 +1,6 @@
 .DS_Store
 .vscode
-persist-data/**
+data/**
 server-dotlocal/**
 server-logs/**
 

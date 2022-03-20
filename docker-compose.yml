@@ -7,10 +7,11 @@ services:
     restart: unless-stopped
     hostname: vircadia-mongodb
     ports:
-      - 27017:27017
+      - 27020:27020
+    command: [--auth]
     volumes:
-      - ./persist-data/vircadia-mongo/data/db:/data/db
-      - ./persist-data/vircadia-mongo/data/log:/var/log/mongodb
+      - ./data/vircadia-mongo/db:/data/db
+      - ./data/vircadia-mongo/log:/var/log/mongodb
     networks:
       - vircadia
 
@@ -23,8 +24,8 @@ services:
       - IAMUS_CONFIG_FILE=/home/cadia/config/iamus.json
     volumes:
       - ./files/metaverse/iamus.json:/home/cadia/config/iamus.json
-      - ./persist-data/vircadia-metaverse/metaverse/logs:/home/cadia/vircadia-metaverse/logs
-      - ./persist-data/vircadia-metaverse/metaverse/Logs:/home/cadia/vircadia-metaverse/Logs
+      - ./data/vircadia-metaverse/metaverse/logs:/home/cadia/vircadia-metaverse/logs
+      - ./data/vircadia-metaverse/metaverse/Logs:/home/cadia/vircadia-metaverse/Logs
     ports:
       - 9400:9400
     links:
@@ -40,9 +41,9 @@ services:
     restart: unless-stopped
     hostname: vircadia-metaverse-dashboard
     volumes:
-      - ./persist-data/vircadia-metaverse-dashboard/logs:/home/cadia/metaverse-dashboard/log
-    ports:
-      - 8090:8080
+      - ./data/vircadia-metaverse-dashboard/logs:/home/cadia/metaverse-dashboard/log
+    # ports:
+    #   - 8088:8088
     links:
       - vircadia-metaverse-server
     networks:
@@ -55,17 +56,19 @@ services:
     container_name: vircadia-ice-server
     restart: unless-stopped
     hostname: vircadia-ice-server
-    ports:
-      - 7337:7337
-      - 7337:7337/udp
+    # ports:
+    #   - 7337:7337
+    #   - 7337:7337/udp
     environment:
-      - METAVERSE_URL=http://localhost:9400
+      - METAVERSE_URL=https://metaverse.innoxai.com
     entrypoint: /home/cadia/start-ice-server.sh
     volumes:
-      - ./persist-data/vircadia-ice-server/server-dotlocal/testmeteverse:/home/cadia/.local
-      - ./persist-data/vircadia-ice-server/server-logs/testmeteverse:/home/cadia/logs
+      - ./data/vircadia-ice-server/server-dotlocal/testmeteverse:/home/cadia/.local
+      - ./data/vircadia-ice-server/server-logs/testmeteverse:/home/cadia/logs
     networks:
       - vircadia
+    links:
+      - vircadia-metaverse-server
     depends_on:
       - vircadia-metaverse-server
 
@@ -74,18 +77,23 @@ services:
     container_name: vircadia-domain-server
     restart: unless-stopped
     hostname: vircadia-domain-server
-    ports:
-      - 40100-40102:40100-40102
-      - 40100-40102:40100-40102/udp
-      - 48000-48009:48000-48009/udp
+    # ports:
+    #   - 40100-40102:40100-40102
+    #   - 40100-40102:40100-40102/udp
+    #   - 48000-48009:48000-48009/udp
     environment:
-      - METAVERSE_URL=http://localhost:9400
-      - ICE_SERVER=http://localhost:7337
+      - METAVERSE_URL=https://metaverse.innoxai.com
+      - ICE_SERVER=https://ice.innoxai.com
       - CLEANNAME=vircadia-metaverse-server
+      - DOCKER_REPOSITORY=local
+      - IMAGE_NAME=vircadia-domain-server
+      - IMAGE_VERSION=l
       - INSTANCE=0
     volumes:
-      - ./persist-data/vircadia-domain-server/server-dotlocal/testmeteverse:/home/cadia/.local
-      - ./persist-data/vircadia-domain-server/server-logs/testmeteverse:/home/cadia/logs
+      - ./data/vircadia-domain-server/server-dotlocal/testmeteverse:/home/cadia/.local
+      - ./data/vircadia-domain-server/server-logs/testmeteverse:/home/cadia/logs
+    links:
+      - vircadia-metaverse-server
     networks:
       - vircadia
     depends_on:
@@ -96,10 +104,30 @@ services:
     container_name: vircadia-web
     restart: unless-stopped
     hostname: vircadia-web
-    ports:
-      - 8080:8080
+    # ports:
+    #   - 8080:8080
     volumes:
-      - ./persist-data/vircadia-web/logs:/home/cadia/vircadia-web/log
+      - ./data/vircadia-web/logs:/home/cadia/vircadia-web/log
+    links:
+      - vircadia-metaverse-server
+    networks:
+      - vircadia
+    depends_on:
+      - vircadia-domain-server
+
+  vircadia-nginx:
+    image: vircadia-nginx
+    container_name: vircadia-nginx
+    restart: unless-stopped
+    volumes:
+      - ./files/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./files/nginx/vircadia.conf:/etc/nginx/http.d/vircadia.conf
+      # - ./files/nginx/vircadia-mongodb.conf:/etc/nginx/stream.d/vircadia-mongodb.conf
+      - ./data/vircadia-nginx/logs:/var/log/nginx
+    ports:
+      - 80:80
+      - 443:443
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     networks:
       - vircadia
     depends_on:

@@ -47,7 +47,7 @@ cd "${RUNDIR}"
 # ./run_assignment-client -t 4 -p $(( $ASSIGNMENT_BASE + 4 )) --server-port ${DOMAIN_SERVER_PORT} >> "${ALOGFILE}-4.log" 2>&1 &
 # ./run_assignment-client -t 2 -p $(( $ASSIGNMENT_BASE + 2 )) --server-port ${DOMAIN_SERVER_PORT} --max 60 >> "${ALOGFILE}-2.log" 2>&1 &
 
-./run_assignment-client -p $ASSIGNMENT_BASE --server-port ${DOMAIN_SERVER_PORT} --max 20 >> "${ALOGFILE}-A.log" 2>&1 &
+./run_assignment-client -p ${ASSIGNMENT_BASE} --server-port ${DOMAIN_SERVER_PORT} --max 20 >> "${ALOGFILE}-A.log" 2>&1 &
 
 sleep 3
 
