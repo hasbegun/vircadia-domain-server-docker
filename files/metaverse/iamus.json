@@ -2,12 +2,12 @@
     "metaverse": {
         "metaverse-name": "TestMetaverse",
         "metaverse-nick-name": "TestMetaverse",
-        "metaverse-server-url": "vircadia-metaverse-server",
-        "default-ice-server-url": "https://ice.innoxai.com",
-        "dashboard-url": "https://dashboard.innoxai.com"
+        "metaverse-server-url": "https://metaverse.innoxai.com",
+        "default-ice-server-url": "vircadia-ice:7337",
+        "dashboard-url": "vircadia-dashboard:8088"
     },
     "server": {
-        "listen-host": "vircadia-metaverse-server",
+        "listen-host": "metaverse.innoxai.com",
         "listen-port": "9400"
     },
     "metaverse-server": {
