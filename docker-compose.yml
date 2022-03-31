@@ -5,7 +5,7 @@ services:
     image: vircadia-mongodb:4.4
     container_name: vircadia-mongodb
     restart: unless-stopped
-    hostname: vircadia-mongodb
+    hostname: mongodb.innoxai.com
     ports:
       - 27020:27020
     command: [--auth]
@@ -15,11 +15,11 @@ services:
     networks:
       - vircadia
 
-  vircadia-metaverse-server:
+  vircadia-metaverse:
     image: metaverse-server:latest
-    container_name: vircadia-metaverse-server
+    container_name: vircadia-metaverse
     restart: unless-stopped
-    hostname: vircadia-metaverse-server
+    hostname: metaverse.innoxai.com
     environment:
       - IAMUS_CONFIG_FILE=/home/cadia/config/iamus.json
     volumes:
@@ -35,30 +35,30 @@ services:
     depends_on:
       - vircadia-mongodb
 
-  vircadia-metaverse-dashboard:
+  vircadia-dashboard:
     image: metaverse-dashboard:latest
-    container_name: vircadia-metaverse-dashboard
+    container_name: vircadia-dashboard
     restart: unless-stopped
-    hostname: vircadia-metaverse-dashboard
+    hostname: dashboard.innoxai.com
     volumes:
       - ./data/vircadia-metaverse-dashboard/logs:/home/cadia/metaverse-dashboard/log
-    # ports:
-    #   - 8088:8088
+    ports:
+      - 8088:8088
     links:
-      - vircadia-metaverse-server
+      - vircadia-metaverse
     networks:
       - vircadia
     depends_on:
-      - vircadia-metaverse-server
+      - vircadia-metaverse
 
-  vircadia-ice-server:
+  vircadia-ice:
     image: vircadia-domain-server:latest
-    container_name: vircadia-ice-server
+    container_name: vircadia-ice
     restart: unless-stopped
-    hostname: vircadia-ice-server
-    # ports:
-    #   - 7337:7337
-    #   - 7337:7337/udp
+    hostname: ice.innoxai.com
+    ports:
+      - 7337:7337
+      - 7337:7337/udp
     environment:
       - METAVERSE_URL=https://metaverse.innoxai.com
     entrypoint: /home/cadia/start-ice-server.sh
@@ -68,57 +68,58 @@ services:
     networks:
       - vircadia
     links:
-      - vircadia-metaverse-server
+      - vircadia-metaverse
     depends_on:
-      - vircadia-metaverse-server
+      - vircadia-metaverse
 
-  vircadia-domain-server:
+  vircadia-domain:
     image: vircadia-domain-server:latest
-    container_name: vircadia-domain-server
+    container_name: vircadia-domain
     restart: unless-stopped
-    hostname: vircadia-domain-server
-    # ports:
-    #   - 40100-40102:40100-40102
-    #   - 40100-40102:40100-40102/udp
-    #   - 48000-48009:48000-48009/udp
+    hostname: domain.innoxai.com
+    ports:
+      - 40100-40102:40100-40102
+      - 40100-40102:40100-40102/udp
+      - 48000-48009:48000-48009/udp
     environment:
       - METAVERSE_URL=https://metaverse.innoxai.com
       - ICE_SERVER=https://ice.innoxai.com
-      - CLEANNAME=vircadia-metaverse-server
+      - CLEANNAME=vircadia-metaverse
       - DOCKER_REPOSITORY=local
-      - IMAGE_NAME=vircadia-domain-server
+      - IMAGE_NAME=vircadia-domain
       - IMAGE_VERSION=l
       - INSTANCE=0
     volumes:
       - ./data/vircadia-domain-server/server-dotlocal/testmeteverse:/home/cadia/.local
       - ./data/vircadia-domain-server/server-logs/testmeteverse:/home/cadia/logs
     links:
-      - vircadia-metaverse-server
+      - vircadia-metaverse
     networks:
       - vircadia
     depends_on:
-      - vircadia-ice-server
+      - vircadia-ice
 
   vircadia-web:
     image: vircadia-web:latest
     container_name: vircadia-web
     restart: unless-stopped
-    hostname: vircadia-web
-    # ports:
-    #   - 8080:8080
+    hostname: web.innoxai.com
+    ports:
+      - 8080:8080
     volumes:
       - ./data/vircadia-web/logs:/home/cadia/vircadia-web/log
     links:
-      - vircadia-metaverse-server
+      - vircadia-metaverse
     networks:
       - vircadia
     depends_on:
-      - vircadia-domain-server
+      - vircadia-domain
 
   vircadia-nginx:
     image: vircadia-nginx
     container_name: vircadia-nginx
     restart: unless-stopped
+    hostname: nginx.innoxai.com
     volumes:
       - ./files/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./files/nginx/vircadia.conf:/etc/nginx/http.d/vircadia.conf
@@ -131,7 +132,7 @@ services:
     networks:
       - vircadia
     depends_on:
-      - vircadia-domain-server
+      - vircadia-domain
 
 networks:
   vircadia:
